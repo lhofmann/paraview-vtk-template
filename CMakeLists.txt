@@ -33,14 +33,13 @@ else ()
     MODULES             ${modules}
     INSTALL_HEADERS     OFF)
 
-  set(PYTHON_VERSION_MAJOR 3)
-  set(PYTHON_VERSION_MINOR 7)
-  vtk_module_python_default_destination(PARAVIEW_PYTHON_SITE_PACKAGES_SUFFIX)
+  file(RELATIVE_PATH python_module_path ${VTK_PREFIX_PATH} ${VTK_PYTHONPATH})
 
   vtk_module_wrap_python(
     MODULES             ${modules}
-    MODULE_DESTINATION  "${PARAVIEW_PYTHON_SITE_PACKAGES_SUFFIX}"
+    MODULE_DESTINATION  "${python_module_path}"
     INSTALL_HEADERS     OFF
+    PYTHON_PACKAGE      "my_vtk"
     TARGET              PythonModules)
 
   paraview_plugin_find_plugins(plugin_files ${CMAKE_CURRENT_SOURCE_DIR}/paraview)
@@ -54,7 +53,6 @@ else ()
   paraview_plugin_build(
     PLUGINS ${plugins}
     TARGET  ParaViewPlugins
-    RUNTIME_DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    LIBRARY_DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    LIBRARY_SUBDIRECTORY "${PARAVIEW_PLUGIN_SUBDIR}")  
+    LIBRARY_DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    LIBRARY_SUBDIRECTORY "plugins") 
 endif ()
