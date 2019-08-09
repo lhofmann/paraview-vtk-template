@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.14)
 
 project(Example)
+
+if(POLICY CMP0087)
+  cmake_policy(SET CMP0087 NEW)
+endif()
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 

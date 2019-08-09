@@ -3,5 +3,10 @@ paraview_add_plugin(ExampleFilterPlugin
   MODULES ExampleFilter
   SERVER_MANAGER_XML ExampleFilter.xml
 )
-
-install(TARGETS ExampleFilterPlugin DESTINATION ${CMAKE_INSTALL_BINDIR}/plugins)
+ 
+install(CODE "execute_process( \
+    COMMAND ${CMAKE_COMMAND} -E create_symlink \
+    ExampleFilterPlugin/$<TARGET_FILE_NAME:ExampleFilterPlugin> \
+    ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/plugins/$<TARGET_FILE_NAME:ExampleFilterPlugin> \
+    )"
+)
