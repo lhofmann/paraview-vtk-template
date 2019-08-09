@@ -1,0 +1,6 @@
+NAME
+  ExampleFilterPlugin
+DESCRIPTION
+  Example
+REQUIRES_MODULES
+  VTK::CommonCore

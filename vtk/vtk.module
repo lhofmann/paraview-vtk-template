@@ -1,0 +1,6 @@
+NAME
+  ExampleFilter
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonExecutionModel
+  VTK::CommonDataModel 
