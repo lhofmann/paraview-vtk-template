@@ -2,9 +2,9 @@
 #define EXAMPLEFILTER_H
 
 #include <vtkUnstructuredGridAlgorithm.h>
-#include "ExampleFilterModule.h"
+#include "ExampleModuleModule.h"
 
-class EXAMPLEFILTER_EXPORT ExampleFilter : public vtkUnstructuredGridAlgorithm
+class EXAMPLEMODULE_EXPORT ExampleFilter : public vtkUnstructuredGridAlgorithm
 {
  public:
   vtkTypeMacro(ExampleFilter,vtkUnstructuredGridAlgorithm);

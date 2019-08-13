@@ -1,5 +1,5 @@
 NAME
-  ExampleFilter
+  ExampleModule
 DEPENDS
   VTK::CommonCore
   VTK::CommonExecutionModel
