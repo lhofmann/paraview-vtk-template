@@ -1,9 +1,11 @@
 set(plugin             ExamplePlugin)
 set(plugin_version     "1.0")
-set(modules            ExampleModule)
 set(server_manager_xml ExampleFilter.xml)
+# VTK module that we are wrapping
+set(modules            ExampleModule)
 
 if (_legacy_build_system)
+  # get headers that need to be wrapped from custom target property (setup in vtk/CMakeLists.txt)
   set(_headers)
   foreach (module ${modules})
     get_target_property(_source_dir ${module} SOURCE_DIR)
@@ -17,27 +19,31 @@ if (_legacy_build_system)
     endforeach ()
   endforeach ()
 
+  # only wrap headers and link to VTK module
   add_paraview_plugin(${plugin} ${plugin_version}
       SERVER_MANAGER_XML ${server_manager_xml}
       SERVER_MANAGER_SOURCES ${_headers})
   target_link_libraries(${plugin} PRIVATE ${modules})
-  set_target_properties(${plugin} PROPERTIES PREFIX "")
-  set_target_properties(${plugin} PROPERTIES INSTALL_RPATH "$ORIGIN/..:$ORIGIN/")
-  install(TARGETS ${plugin} DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/plugins)
+  set_target_properties(${plugin} PROPERTIES PREFIX "")  
+  set_target_properties(${plugin} PROPERTIES INSTALL_RPATH "${_paraview_plugin_rpath}")
+  set_target_properties(${plugin} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${_paraview_plugin_path})
+  
+  install(TARGETS ${plugin} DESTINATION ${CMAKE_INSTALL_PREFIX}/${_paraview_plugin_path})
 else ()
   paraview_add_plugin(${plugin}
     VERSION ${plugin_version}
     MODULES ${modules}
     SERVER_MANAGER_XML ${server_manager_xml}
   )
-  set_target_properties(${plugin} PROPERTIES INSTALL_RPATH "$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}:$ORIGIN/")
-  set_target_properties(${plugin} PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
+  set_target_properties(${plugin} PROPERTIES INSTALL_RPATH "${_paraview_plugin_rpath}")
+  set_target_properties(${plugin} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${_paraview_plugin_path})
 
+  # paraview_add_plugin installs the plugin into bin/plugin/plugin.so
+  # in order for ParaView to find the plugin, we create a symlink bin/plugin.so to bin/plugin/plugin.so
   install(CODE "execute_process( \
       COMMAND ${CMAKE_COMMAND} -E create_symlink \
       ${plugin}/${plugin}.so \
-      ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/plugins/${plugin}.so \
+      ${CMAKE_INSTALL_PREFIX}/${_paraview_plugin_path}/${plugin}.so \
       )"
   )
 endif ()
