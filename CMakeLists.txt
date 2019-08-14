@@ -19,13 +19,11 @@ set(_python_module_name "my_vtk")
 
 include(CMakePrintHelpers)
 include(GNUInstallDirs)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 # detect paraview and python paths
 if ((ENABLE_PARAVIEW AND ParaView_VERSION VERSION_LESS 5.7) OR (NOT ENABLE_PARAVIEW AND VTK_VERSION VERSION_LESS 8.90.0))
   set(_legacy_build_system TRUE)
+  set(CMAKE_INSTALL_LIBDIR lib)
 
   include(GenerateExportHeader)
   if (ENABLE_PARAVIEW)
@@ -55,6 +53,10 @@ else ()
   set(_vtk_prefix ${VTK_PREFIX_PATH})
   set(_paraview_plugin_path ${CMAKE_INSTALL_BINDIR}/plugins)
 endif ()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 # setup RPATHs
 file(RELATIVE_PATH _paraview_plugin_rpath /${_paraview_plugin_path} /${CMAKE_INSTALL_LIBDIR})
