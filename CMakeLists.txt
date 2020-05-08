@@ -62,7 +62,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 file(RELATIVE_PATH _paraview_plugin_rpath /${_paraview_plugin_path} /${CMAKE_INSTALL_LIBDIR})
 set(_paraview_plugin_rpath "$ORIGIN/${_paraview_plugin_rpath}")
 if (VTK_WRAP_PYTHON)
-  file(RELATIVE_PATH _python_module_path ${_vtk_prefix} ${VTK_PYTHONPATH})
+  set(_vtk_pythonpath "${VTK_PYTHONPATH}")
+  if (NOT IS_ABSOLUTE ${VTK_PYTHONPATH})
+    set(_vtk_pythonpath "${_vtk_prefix}/${VTK_PYTHONPATH}")
+  endif ()
+
+  file(RELATIVE_PATH _python_module_path ${_vtk_prefix} ${_vtk_pythonpath})
   file(RELATIVE_PATH _python_module_rpath /${_python_module_path}/${_python_module_name} /${CMAKE_INSTALL_LIBDIR})
   set(_python_module_rpath "$ORIGIN/${_python_module_rpath}")
 endif ()
