@@ -28,7 +28,7 @@ if (_legacy_build_system)
     set_target_properties(${module}Python PROPERTIES PREFIX "")
 
     include(vtkWrapPython)
-    vtk_wrap_python3(${module}Python ${module}Python_SOURCES ${headers})
+    vtk_wrap_python3(${module}Python ${module}Python_SOURCES "${headers}")
 
     add_library(${module}PythonD STATIC ${${module}Python_SOURCES})
     set_target_properties(${module}PythonD PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
