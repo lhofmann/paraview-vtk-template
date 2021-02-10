@@ -1,0 +1,47 @@
+if ! [ -z "${_VTK_ENV+_}" ] ; then
+  echo "Deactivating previously activated environment ${_VTK_ENV}."
+  deactivate_vtk_env
+fi
+
+_VTK_ENV="@_env_root@"
+
+deactivate_vtk_env () {
+  PATH="$_OLD_PATH"
+  export PATH
+  unset _OLD_PATH
+
+  LD_LIBRARY_PATH="$_OLD_LD_LIBRARY_PATH"
+  export LD_LIBRARY_PATH
+  unset _OLD_LD_LIBRARY_PATH
+
+  PYTHONPATH="$_OLD_PYTHONPATH"
+  export PYTHONPATH
+  unset _OLD_PYTHONPATH
+
+  PV_PLUGIN_PATH="$_OLD_PV_PLUGIN_PATH"
+  export PV_PLUGIN_PATH
+  unset _OLD_PV_PLUGIN_PATH
+  
+  unset _VTK_ENV
+  unset -f deactivate_vtk_env
+}
+
+_OLD_PATH="$PATH"
+PATH="@_env_bin@:$PATH"
+export PATH
+
+_OLD_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+LD_LIBRARY_PATH="@_env_lib@:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH
+
+_OLD_PYTHONPATH="$PYTHONPATH"
+PYTHONPATH="@_env_python@:$PYTHONPATH"
+export PYTHONPATH
+
+_OLD_PV_PLUGIN_PATH="$PV_PLUGIN_PATH"
+PV_PLUGIN_PATH="@_env_paraview@:$PV_PLUGIN_PATH"
+export PV_PLUGIN_PATH
+
+if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
+  hash -r 2>/dev/null
+fi

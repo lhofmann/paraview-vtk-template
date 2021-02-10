@@ -1,0 +1,6 @@
+NAME
+  MyPlugin
+DESCRIPTION
+  Example Plugin
+REQUIRES_MODULES
+  Template::MyFilters

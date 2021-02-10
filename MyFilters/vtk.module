@@ -1,0 +1,7 @@
+NAME
+  Template::MyFilters
+LIBRARY_NAME
+  TemplateMyFilters
+DEPENDS
+  VTK::CommonExecutionModel
+

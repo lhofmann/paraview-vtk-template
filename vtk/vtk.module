@@ -1,4 +1,0 @@
-NAME
-  ExampleModule
-DEPENDS
-  VTK::CommonExecutionModel

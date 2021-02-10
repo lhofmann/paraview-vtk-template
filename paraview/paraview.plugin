@@ -1,6 +1,0 @@
-NAME
-  ExamplePlugin
-DESCRIPTION
-  Example
-REQUIRES_MODULES
-  VTK::CommonCore
