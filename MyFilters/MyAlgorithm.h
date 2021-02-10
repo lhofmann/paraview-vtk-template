@@ -9,7 +9,16 @@ class TEMPLATEMYFILTERS_EXPORT MyAlgorithm : public vtkDataObjectAlgorithm {
   static MyAlgorithm *New();
   vtkTypeMacro(MyAlgorithm, vtkDataObjectAlgorithm);
 
+  vtkSetMacro(Multiplier, double);
+  vtkGetMacro(Multiplier, double);
+
+  vtkSetMacro(DoMultiply, bool);
+  vtkGetMacro(DoMultiply, bool);
+
  protected:
+  double Multiplier {1.};
+  bool DoMultiply {true};
+
   MyAlgorithm();
   ~MyAlgorithm() override;
 

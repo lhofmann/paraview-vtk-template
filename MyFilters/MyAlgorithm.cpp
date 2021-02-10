@@ -8,7 +8,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkDataObject.h>
 #include <vtkLogger.h>
+#include <vtkImageData.h>
 #include <vtkPolyData.h>
+#include <vtkPoints.h>
+#include <vtkDoubleArray.h>
+#include <vtkCellData.h>
 
 vtkStandardNewMacro(MyAlgorithm);
 
@@ -21,7 +25,11 @@ MyAlgorithm::~MyAlgorithm() = default;
 
 int MyAlgorithm::FillInputPortInformation(int port, vtkInformation *info) {
   if (port == 0) {
-    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
+    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
+    // optional:
+    // info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
+    // repeatable:
+    // info->Set(vtkAlgorithm::INPUT_IS_REPEATABLE(), 1);
   }
   return 1;
 }
@@ -72,7 +80,10 @@ int MyAlgorithm::RequestDataObject(
     vtkInformation *request,
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector) {
+  // create vtkPolyData on output port 0
   default_request_data_object<vtkPolyData>(this, outputVector, 0);
+  // copy data type from input port 0 to output port 0
+  // pass_input_type_request_data_object(inputVector, 0, outputVector, 0);
   return 1;
 }
 
@@ -80,6 +91,7 @@ int MyAlgorithm::RequestInformation(
     vtkInformation *request,
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector) {
+  // nothing to do since output is not structured grid
   return 1;
 }
 
@@ -87,6 +99,7 @@ int MyAlgorithm::RequestUpdateExtent(
     vtkInformation *request,
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector) {
+  // nothing to do since output is not structured grid
   return 1;
 }
 
@@ -94,12 +107,47 @@ int MyAlgorithm::RequestData(
     vtkInformation *request,
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector) {
-  vtkPolyData *input = vtkPolyData::GetData(inputVector[0], 0);
+  vtkImageData *input = vtkImageData::GetData(inputVector[0], 0);
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
   if (!input || !output)
     return 0;
 
-  output->ShallowCopy(input);
+  vtkDataArray *array = this->GetInputArrayToProcess(0, input);
+  if (!array) {
+    vtkLog(ERROR, "No input array.");
+    return 0;
+  }
+  if (array->GetNumberOfTuples() < 1) {
+    vtkLog(ERROR, "Input array has not enough tuples.");    
+    return 0;
+  }
+  if (array->GetNumberOfComponents() != 1) {
+    vtkLog(ERROR, "Input array needs to have exactly one component.");    
+    return 0;
+  }
+
+  vtkNew<vtkPolyData> result;
+
+  vtkNew<vtkPoints> points;
+  result->SetPoints(points);
+  result->Allocate();
+  points->InsertPoint(0, 1., 1., 1.);
+  points->InsertPoint(1, 2., 2., 2.);
+  vtkIdType ids[2] {0, 1};
+  result->InsertNextCell(VTK_POLY_LINE, 2, ids);
+
+  vtkNew<vtkDoubleArray> data;
+  data->SetName("Data");
+  data->SetNumberOfComponents(1);
+  data->SetNumberOfTuples(1);
+  result->GetCellData()->AddArray(data);
+
+  double value = array->GetTuple1(0);
+  if (this->DoMultiply)
+    value *= this->Multiplier;
+  data->SetValue(0, value);
+
+  output->ShallowCopy(result);
 
   return 1;
 }
