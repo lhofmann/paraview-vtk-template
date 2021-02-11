@@ -1,25 +1,31 @@
 <ServerManagerConfiguration>
+    <!-- name is either "filters" (at least one input) or "sources" (no inputs) -->
     <ProxyGroup name="filters">
         <SourceProxy name="MyAlgorithm"
                      class="MyAlgorithm"
                      label="My Algorithm">
+            <!-- Note: the first input (index 0) *must* be named Input -->
             <InputProperty
                     name="Input"
                     command="SetInputConnection"
+                    port_index="0"
                     label="Input">
                 <ProxyGroupDomain name="groups">
                     <Group name="sources"/>
                     <Group name="filters"/>
                 </ProxyGroupDomain>
+                <!-- define one or valid more input data types -->
                 <DataTypeDomain name="input_type">
                     <DataType value="vtkImageData"/>
                 </DataTypeDomain>
+                <!-- specify data array for input array property -->
                 <InputArrayDomain attribute_type="any"
                                   name="input_array"
                                   number_of_components="1"
                                   optional="0"/>
             </InputProperty>
 
+            <!-- default_values="0" sets the index of the data array -->
             <StringVectorProperty
                     name="InputArray"
                     default_values="0"
@@ -27,9 +33,11 @@
                     number_of_elements="5"
                     element_types="0 0 0 0 2"
                     label="Input Array">
+                <!-- use data array specified in the input property -->
                 <ArrayListDomain name="array_list"
                                  input_domain_name="input_array">
                     <RequiredProperties>
+                        <!-- name="Input" selects the input property -->
                         <Property name="Input" function="Input"/>
                     </RequiredProperties>
                 </ArrayListDomain>
@@ -41,6 +49,7 @@
                     command="SetDoMultiply"
                     number_of_elements="1"
                     default_values="1">
+                <!-- use a checkbox -->
                 <BooleanDomain name="bool"/>
             </IntVectorProperty>
 
@@ -51,6 +60,7 @@
                     number_of_elements="1"
                     default_values="1.">
                 <Hints>
+                    <!-- only show this property if DoMultiply equals 1 -->
                     <PropertyWidgetDecorator type="GenericDecorator"
                                              mode="visibility"
                                              property="DoMultiply"
@@ -59,6 +69,7 @@
             </DoubleVectorProperty>
 
             <Hints>
+                <!-- add a submenu -->
                 <ShowInMenu category="Template" />
             </Hints>
         </SourceProxy>

@@ -1,5 +1,17 @@
 #include "MyAlgorithm.h"
 
+/* 
+Include VTK headers here. Make sure to not have any unnecessary includes in the header.
+You may need to add further VTK modules in the PRIVATE_DEPENDS (if only used in source file) 
+or DEPENDS (if used in header) sections for the vtk.module file.
+
+E.g. for using vtkGeometryFilter, find its header in the VTK source, which is VTK/Filters/Geometry/vtkGeometryFilter.h.
+The corresponding module is defined in VTK/Filters/Geometry/vtk.module, which has name VTK::FiltersGeometry.
+Thus, you need to add this to your vtk.module file:
+PRIVATE_DEPENDS
+  VTK::FiltersGeometry
+*/
+
 #include <vtkCommand.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
@@ -107,11 +119,13 @@ int MyAlgorithm::RequestData(
     vtkInformation *request,
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector) {
+  // get input and output data objects
   vtkImageData *input = vtkImageData::GetData(inputVector[0], 0);
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
   if (!input || !output)
     return 0;
 
+  // get input data array and check
   vtkDataArray *array = this->GetInputArrayToProcess(0, input);
   if (!array) {
     vtkLog(ERROR, "No input array.");
@@ -126,8 +140,8 @@ int MyAlgorithm::RequestData(
     return 0;
   }
 
+  // create a poly data object with a single poly line
   vtkNew<vtkPolyData> result;
-
   vtkNew<vtkPoints> points;
   result->SetPoints(points);
   result->Allocate();
@@ -136,17 +150,20 @@ int MyAlgorithm::RequestData(
   vtkIdType ids[2] {0, 1};
   result->InsertNextCell(VTK_POLY_LINE, 2, ids);
 
+  // create a cell data array
   vtkNew<vtkDoubleArray> data;
   data->SetName("Data");
   data->SetNumberOfComponents(1);
   data->SetNumberOfTuples(1);
   result->GetCellData()->AddArray(data);
 
+  // get first value from input data array
   double value = array->GetTuple1(0);
   if (this->DoMultiply)
     value *= this->Multiplier;
   data->SetValue(0, value);
 
+  // copy to output
   output->ShallowCopy(result);
 
   return 1;

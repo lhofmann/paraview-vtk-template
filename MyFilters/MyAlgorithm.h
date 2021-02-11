@@ -1,8 +1,15 @@
 #ifndef MYALGORITHM_H_
 #define MYALGORITHM_H_
 
-#include "TemplateMyFiltersModule.h"
+#include "TemplateMyFiltersModule.h"  // for TEMPLATEMYFILTERS_EXPORT macro
 #include <vtkDataObjectAlgorithm.h>
+/*
+  Only include headers here, which are actually needed.
+  Use forward-declarations if only (smart-)pointers are needed.
+  E.g. if your class declaration contains a vtkPolyData* or vtkSmartPointer<vtkPolyData>,
+  add this forward-declaration here:  
+  class vtkPolyData;
+*/
 
 class TEMPLATEMYFILTERS_EXPORT MyAlgorithm : public vtkDataObjectAlgorithm {
  public:
