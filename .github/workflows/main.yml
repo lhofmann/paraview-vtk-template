@@ -1,0 +1,13 @@
+name: CI
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run superbuild
+      run: /bin/bash superbuild.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        name: package
+        path: package/

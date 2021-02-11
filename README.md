@@ -48,3 +48,10 @@ The C++ ParaView plugin can be loaded from `build/lib/plugins/MyPlugin/MyPlugin.
 
 This project also supports installing all binaries and Python sources to locations, where they are automatically found. The main use case for this is installing VTK or ParaView in your home directory, by supplying, e.g., `-DCMAKE_INSTALL_PREFIX=$HOME/paraview`, and running `ninja install`.
 Using the same path for this project will allow your local ParaView installation to use your code without additionally setting environment variables.
+
+## Superbuild
+
+Using the docker image [lhofmann/paraview-superbuild-docker](https://github.com/lhofmann/paraview-superbuild-docker), distributable binaries, which are compatible with the Linux binaries from [paraview.org](https://www.paraview.org/), can be built. This only requires docker to be installed on your system, and your user to be allowed to run docker commands  (i.e., member of the docker group).
+
+Running `./superbuild.sh` automatically builds the project in the docker container, and outputs binaries in the `package/` subdirectory.
+Note, that rerunning the script will perform an incremental build. If you want to use the same script in multiple different directories, change the `container` variable in the script (it must be a unique name).
